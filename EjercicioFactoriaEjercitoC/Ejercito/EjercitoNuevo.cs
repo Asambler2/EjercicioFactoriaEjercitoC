@@ -39,13 +39,13 @@ namespace EjercicioFactoriaEjercitoC.Ejercito
 
         public double CalculoCapacidadMilitar()
         {
-            return ((this.PotenciaFuegoTotal * this.VelocidadTotal) / 2) / (100 - this.BlindajeTotal);
+            return (((double)this.PotenciaFuegoTotal * (double)this.VelocidadTotal) / 2) / (100 - (double)this.BlindajeTotal);
         }
 
         public string MostrarEjercito()
         {
             return $"Nombre Ejercito: {this.NombreEjercito}, Número de elementos: {this.NumElementos}, Potencia total: {this.PotenciaFuegoTotal}, " +
-                $"Blindaje total {this.BlindajeTotal}, Velocidad total: {this.VelocidadTotal}, Gasto total: {this.GastoTotal}, Capacidad militar: {this.CapacidadMilitar}, " +
+                $"Blindaje total {this.BlindajeTotal}, Velocidad total: {this.VelocidadTotal}, Gasto total: {this.GastoTotal}, Capacidad militar: {Math.Round(this.CapacidadMilitar, 2)}, " +
                 $"Presupuesto: {this.Presupuesto}, Presupuesto disponible: {this.Presupuesto - this.GastoTotal}";
         }
         public string MostrarUnidadesEjercito()
