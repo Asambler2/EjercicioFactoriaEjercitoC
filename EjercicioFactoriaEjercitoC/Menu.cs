@@ -1,29 +1,37 @@
 ﻿using EjercicioFactoriaEjercitoC.Ejercito;
 using EjercicioFactoriaEjercitoC.GrupoDeEjercitos;
 using EjercicioFactoriaEjercitoC.Unidades;
+using EjercicioFactoriaEjercitoC.ValidadorNombreEjercito;
+using EjercicioFactoriaEjercitoC.FabricaEjercitos;
+using EjercicioFactoriaEjercitoC.FabricaUnidades;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EjercicioFactoriaEjercitoC.ValidadorPresupuesto;
 
 namespace EjercicioFactoriaEjercitoC
 {
     public class Menu
     {
-        IGrupo GrupoEjercitos = new GrupoEjercitos();
+        IGrupo GrupoEjercitos = new GrupoEjercitos(new ValidaNombreEjercitocs ());
         public void GenerarMenu()
         {
             int Comando = 0;
             Comando = OpcionesGrupoEjercitos();
             switch(Comando)
             {
-                case 1: GrupoEjercitos.GrupoEjercitosTotal.Add(CrearEjercito());
+                case 1: IFactoriaEjercitos Factoria = new FactoriaEjercito();
+                    GrupoEjercitos.GrupoEjercitosTotal.Add(Factoria.DameEjercito(new ValidadorDelPresupuesto()));
                     break;
-                case 2: GrupoEjercitos.MostrarGrupoEjercitos();
+                case 2:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine(GrupoEjercitos.MostrarGrupoEjercitos());
+                    Console.ForegroundColor = ConsoleColor.White;
                     break;  
                 case 3: IEjercito Ejercito = BuscarEjercito();
-                    MenuEjercito(Ejercito);
+                    if(Ejercito != null)MenuEjercito(Ejercito);
                     break;
             }
             if (Comando != 0) GenerarMenu();
@@ -48,28 +56,12 @@ namespace EjercicioFactoriaEjercitoC
                 ColeccionNombres += $"\n{Ejercito.NombreEjercito}";
                 if(Ejercito.NombreEjercito.Equals(NombreEjercito))return Ejercito;
             }
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Introduce un nombre de ejercito existente de entre estos nombres. \n{ColeccionNombres}");
-            BuscarEjercito();
-            return new EjercitoNuevo("", 0);
+            Console.ForegroundColor = ConsoleColor.White;
+            return null;
         }
 
-        public IEjercito CrearEjercito()
-        {
-            string NombreEjercito = "";
-            float Presupuesto = 0;
-            Console.WriteLine("Introduce el nombre del nuevo ejercito.");
-            NombreEjercito = Console.ReadLine();
-            foreach (IEjercito Ejercito in GrupoEjercitos.GrupoEjercitosTotal)
-            {
-                if (Ejercito.NombreEjercito == NombreEjercito) {
-                    Console.WriteLine("Ese Ejercito ya existe, introduce otro.");
-                    CrearEjercito();
-                };
-            }
-            Console.WriteLine("Introduce el presupuesto del nuevo ejercito.");
-            Presupuesto = float.Parse(Console.ReadLine());
-            return new EjercitoNuevo(NombreEjercito, Presupuesto);
-        }
         public int OpcionesEjercito(IEjercito Ejercito)
         {
             int Comando = 0;
@@ -88,48 +80,20 @@ namespace EjercicioFactoriaEjercitoC
             int Comando = 0;
             Comando = OpcionesEjercito(Ejercito);
             switch (Comando) {
-                case 1: Ejercito = CrearUnidad(Ejercito); 
+                case 1: IFactoriaUnidad Factoria = new FactoriaUnidad();
+                    Ejercito.AddUnidad(Factoria.DameUnidad());
                     break;
-                case 2: Console.WriteLine(Ejercito.MostrarEjercito());
+                case 2:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine(Ejercito.MostrarEjercito());
+                    Console.ForegroundColor = ConsoleColor.White;
                     break;
-                case 3: Ejercito.MostrarUnidadesEjercito();
+                case 3: Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write(Ejercito.MostrarUnidadesEjercito());
+                    Console.ForegroundColor = ConsoleColor.White;
                     break;
             }
             if (Comando != 0) MenuEjercito(Ejercito);
-        }
-
-        public IEjercito CrearUnidad(IEjercito Ejercito)
-        {
-            string NombreUnidad = "";
-            int Velocidad = 0;
-            int Blindaje = 0;
-            int PotenciaFuego = 0;
-            float Precio = 0;
-            Console.WriteLine("Escribe el nombre de la unidad");
-            NombreUnidad = Console.ReadLine();
-            foreach(Unidad LaUnidad in Ejercito.EjercitoListaUnidades) { 
-                if(NombreUnidad.Equals(LaUnidad.Titulo)) {
-                    Console.WriteLine("Esa unidad ya existe introduce un nuevo nombre.");
-                    CrearUnidad(Ejercito);
-                }
-            }
-            Console.WriteLine("Escribe la velocidad de la unidad");
-            Velocidad = int.Parse(Console.ReadLine());
-            Console.WriteLine("Escribe el blindaje de la unidad");
-            Blindaje = int.Parse(Console.ReadLine());
-            Console.WriteLine("Escribe la potencia de fuego de la unidad");
-            PotenciaFuego = int.Parse(Console.ReadLine());
-            Console.WriteLine("Escribe el precio de la unidad");
-            Precio = float.Parse(Console.ReadLine());
-            if (Ejercito.GastoTotal + Precio > (Ejercito as EjercitoNuevo).Presupuesto)
-            {
-                Console.WriteLine("Excede el presupuesto del ejercito, vuelve a generar una unidad con un precio menor o cero." 
-                    + " Excedente:" + (Ejercito.GastoTotal + Precio - (Ejercito as EjercitoNuevo).Presupuesto));
-                CrearUnidad(Ejercito);
-            }
-            IMilitarizable LaUnidadNueva = new Unidad(NombreUnidad, Velocidad, Blindaje, PotenciaFuego, Precio);
-            Ejercito.AddUnidad(LaUnidadNueva);
-            return Ejercito;
         }
     }
 }

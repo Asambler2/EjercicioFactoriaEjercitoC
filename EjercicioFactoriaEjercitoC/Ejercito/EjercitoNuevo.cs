@@ -1,6 +1,8 @@
 ﻿using EjercicioFactoriaEjercitoC.Unidades;
+using EjercicioFactoriaEjercitoC.ValidadorPresupuesto;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,24 +19,35 @@ namespace EjercicioFactoriaEjercitoC.Ejercito
         public float GastoTotal { get; set; } = 0;
         public double CapacidadMilitar { get; set; } = 0;
         public float Presupuesto { get; set; }
+        public IValidadorPresupuesto Validador { get; set; }
         public List<IMilitarizable> EjercitoListaUnidades { get; set; } = new List<IMilitarizable>();
 
-        public EjercitoNuevo(string NombreEjercito, float Presupuesto)
+        public EjercitoNuevo(string NombreEjercito, float Presupuesto, IValidadorPresupuesto Validador )
         {
             this.NombreEjercito = NombreEjercito;
-            this.Presupuesto = Presupuesto; 
+            this.Presupuesto = Presupuesto;
+            this.Validador = Validador;
         }
 
         public void AddUnidad(IMilitarizable Unidad)
         {
-            EjercitoListaUnidades.Add(Unidad);
-            this.NumElementos++;
-            this.PotenciaFuegoTotal += Unidad.PotenciaFuego;
-            this.BlindajeTotal += Unidad.Blindaje;
-            this.VelocidadTotal += Unidad.Velocidad;
-            this.GastoTotal += (Unidad as ICosteable).Precio;
-            this.CapacidadMilitar = CalculoCapacidadMilitar();
-
+            if(Validador.ValidarAddUnidad(Unidad as Unidad, GastoTotal, Presupuesto))
+            {
+                EjercitoListaUnidades.Add(Unidad);
+                this.NumElementos++;
+                this.PotenciaFuegoTotal += Unidad.PotenciaFuego;
+                this.BlindajeTotal += Unidad.Blindaje;
+                this.VelocidadTotal += Unidad.Velocidad;
+                this.GastoTotal += (Unidad as ICosteable).Precio;
+                this.CapacidadMilitar = CalculoCapacidadMilitar();
+            } else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"No hay suficiente presupuesto para esta unidad siendo el presupuesto: {this.Presupuesto}" +
+                    $" , el gasto total acumulado hasta entonces: {this.GastoTotal}, siendo el precio: {(Unidad as ICosteable).Precio} " +
+                    $" y siendo el deficit del presupuesto de {this.Presupuesto - this.GastoTotal - (Unidad as ICosteable).Precio}");
+                Console.ForegroundColor = ConsoleColor.White;
+            }
         }
 
         public double CalculoCapacidadMilitar()
