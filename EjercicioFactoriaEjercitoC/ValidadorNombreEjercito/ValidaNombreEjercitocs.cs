@@ -14,7 +14,7 @@ namespace EjercicioFactoriaEjercitoC.ValidadorNombreEjercito
         {
             foreach (IEjercito ElEjercito in GrupoEjercitosTotal)
             {
-                return (Ejercito.NombreEjercito.Equals(Ejercito.NombreEjercito) ? false : true);
+                return (ElEjercito.NombreEjercito.Equals(Ejercito.NombreEjercito) ? false : true);
             }
             return true;
         }

@@ -67,7 +67,6 @@ namespace EjercicioFactoriaEjercitoC.Ejercito
             foreach (IMilitarizable Unidad in EjercitoListaUnidades)
             {
                 Cadena += Unidad.Mostrar();
-                Console.WriteLine($"{Unidad.Mostrar()}");
             }
             return Cadena;
         }

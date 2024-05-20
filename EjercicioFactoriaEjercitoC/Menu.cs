@@ -23,7 +23,7 @@ namespace EjercicioFactoriaEjercitoC
             switch(Comando)
             {
                 case 1: IFactoriaEjercitos Factoria = new FactoriaEjercito();
-                    GrupoEjercitos.GrupoEjercitosTotal.Add(Factoria.DameEjercito(new ValidadorDelPresupuesto()));
+                    GrupoEjercitos.AddEjercito(Factoria.DameEjercito(new ValidadorDelPresupuesto()));
                     break;
                 case 2:
                     Console.ForegroundColor = ConsoleColor.Yellow;
@@ -89,7 +89,7 @@ namespace EjercicioFactoriaEjercitoC
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case 3: Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write(Ejercito.MostrarUnidadesEjercito());
+                    Console.WriteLine(Ejercito.MostrarUnidadesEjercito());
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
             }
